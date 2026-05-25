@@ -8,6 +8,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "tsx": "^4.22.3",
     "typescript": "^5.5.3"
   },
   "private": true
