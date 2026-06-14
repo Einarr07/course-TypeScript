@@ -4,10 +4,13 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest --config src/advanced_concepts/jest/jest.config.js"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.22.3",
     "typescript": "^5.5.3"
   },

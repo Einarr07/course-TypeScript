@@ -3,7 +3,7 @@
 This repository is a personal TypeScript learning notebook.
 
 The goal is to keep small, clear examples that help remember TypeScript concepts and similar programming ideas: types,
-arrays, interfaces, functions, classes, inheritance, generics, modules, and DOM typing.
+arrays, interfaces, functions, classes, inheritance, generics, modules, DOM typing, decorators, mapped types, and testing.
 
 ## What This Project Is For
 
@@ -19,21 +19,26 @@ arrays, interfaces, functions, classes, inheritance, generics, modules, and DOM 
 course-TypeScript/
   src/
     fundamentals/
-      base-variables/
-      differents-variables/
-      arrays/
+      base-variables/       # Basic types (string, number, boolean, null, undefined)
+      differents-variables/  # Special types (any, unknown, void, never)
+      arrays/                # Arrays, tuples, and enums
     functions/
-      interfaces/
+      interfaces/            # Object interfaces, function interfaces, optional & readonly
     oop/
-      classes/
-      methods/
-      extends/
-      generics/
-      types_classes/
+      classes/               # Class creation, constructors, instances
+      methods/               # Parameters, return types, optional/rest/default params
+      extends/               # Generic constraints with extends
+      generics/              # Generic functions and classes
+      types_classes/         # Access modifiers (public, protected, private), inheritance
     modules_and_projects/
-      modules/
-      dom/
-  dist/
+      modules/               # export/import with a calculator example
+      dom/                   # DOM selection, HTML element typing, browser interaction
+    advanced_concepts/
+      decorators/            # Class decorators and interface merging
+      types/                 # Mapped types, template literal types, conditional types
+      fetch/                 # Fetch API with async/await, DOM type assertions
+      jest/                  # Unit testing with Jest and ts-jest
+  dist/                      # Compiled JavaScript output
   package.json
   tsconfig.json
   README.md
@@ -73,6 +78,16 @@ Examples that connect multiple files or interact with the browser.
 - `modules/`: `export` and `import` using a calculator example.
 - `dom/`: DOM selection, HTML element typing, and browser interaction.
 
+### `src/advanced_concepts`
+
+Advanced TypeScript features and tooling.
+
+- `decorators/decorators.ts`: class decorators that dynamically add methods to a class prototype, and interface merging to type those dynamic methods without shadowing.
+- `types/types.ts`: mapped types (`CustomPartial`, `CustomReadOnly`), template literal types for generating string unions, and conditional types with `extends ? :` syntax.
+- `fetch/main.ts`: using the Fetch API with `async`/`await` to call external APIs, DOM manipulation with type assertions (`as HTMLElement`), and event listeners with async callbacks.
+- `jest/User.ts`: class with `private` access modifiers, encapsulation via public getter methods, default parameters, and `export` for module usage.
+- `jest/User.test.ts`: unit testing with Jest — `describe` blocks, `test` cases, `beforeEach` setup, and matchers like `.toBe()`, `.toBeTruthy()`, and `.toBeFalsy()`.
+
 ## Important TypeScript Commands
 
 ### Create a TypeScript configuration
@@ -86,7 +101,7 @@ This creates `tsconfig.json`, where TypeScript compiler options are configured.
 ### Compile the whole project
 
 ```bash
-ppnpm run build
+pnpm run build
 ```
 
 This runs:
@@ -126,6 +141,14 @@ Use `tsx` when you want to test or practice quickly.
 
 Use `tsc` when you want to compile TypeScript into JavaScript and check the project with the compiler.
 
+### Run tests with Jest
+
+```bash
+pnpm test
+```
+
+This runs `jest --config src/advanced_concepts/jest/jest.config.js`, which executes all `*.test.ts` files using `ts-jest`.
+
 ## TypeScript vs JavaScript Files
 
 - `.ts` files are the TypeScript source files you write.
@@ -149,6 +172,8 @@ The project uses `tsconfig.json` with these important options:
 - `strict: true`: enable strict type checking.
 - `outDir: "dist"`: place compiled files in the `dist` folder.
 - `include: ["src"]`: compile files inside `src`.
+
+> **Note:** The `src/advanced_concepts/fetch/` folder has its own `tsconfig.json` that adds `"lib": ["es5", "dom", "es2015.promise"]` — this is needed because that code runs in a browser and uses DOM APIs like `document` and `fetch`.
 
 ## Learning Notes
 
@@ -213,6 +238,69 @@ function identity<T>(value: T): T {
 }
 ```
 
+### Mapped Types
+
+Mapped types create new types by transforming each property of an existing type.
+
+```ts
+type CustomPartial<T> = {
+    [K in keyof T]?: T[K];
+};
+```
+
+### Template Literal Types
+
+Template literal types build new string types by combining unions with string interpolation.
+
+```ts
+type Variants = 'Little' | 'Medium';
+type ClassCSS = `button-${Variants}`; // "button-Little" | "button-Medium"
+```
+
+### Conditional Types
+
+Conditional types choose a type dynamically based on a condition, like a ternary for types.
+
+```ts
+type IsNumber<T> = T extends number ? true : false;
+```
+
+### Decorators
+
+Decorators are functions that modify or extend classes, methods, or properties at definition time.
+
+```ts
+function MyDecorator(target: Function) {
+    target.prototype.newMethod = () => 'added by decorator';
+}
+
+@MyDecorator
+class MyClass {}
+```
+
+### Async/Await with Fetch
+
+`async`/`await` simplifies working with Promises, making asynchronous code look synchronous.
+
+```ts
+const fetchData = async () => {
+    const response = await fetch('https://api.example.com/data');
+    return await response.json();
+};
+```
+
+### Unit Testing with Jest
+
+Jest is a testing framework. `ts-jest` allows Jest to run TypeScript files directly.
+
+```ts
+describe('MyClass', () => {
+    test('should return the correct value', () => {
+        expect(myFunction()).toBe('expected');
+    });
+});
+```
+
 ## Recommended Study Flow
 
 1. Start with `src/fundamentals/base-variables/main.ts`.
@@ -220,14 +308,19 @@ function identity<T>(value: T): T {
 3. Study interfaces in `src/functions/interfaces`.
 4. Practice methods and classes in `src/oop`.
 5. Review modules with `src/modules_and_projects/modules`.
-6. Finish with DOM typing in `src/modules_and_projects/dom`.
+6. Study DOM typing in `src/modules_and_projects/dom`.
+7. Learn mapped types, template literals, and conditional types in `src/advanced_concepts/types`.
+8. Practice the Fetch API with `src/advanced_concepts/fetch`.
+9. Explore class decorators in `src/advanced_concepts/decorators`.
+10. Finish with unit testing in `src/advanced_concepts/jest`.
 
 ## Useful Commands
 
 ```bash
-pnpm install
-pnpm run build
-npx tsx src/fundamentals/base-variables/main.ts
+pnpm install                                          # Install dependencies
+pnpm run build                                        # Compile the full project
+pnpm test                                             # Run Jest tests
+npx tsx src/fundamentals/base-variables/main.ts       # Run a single file quickly
 ```
 
 ## Notes For This Repository
